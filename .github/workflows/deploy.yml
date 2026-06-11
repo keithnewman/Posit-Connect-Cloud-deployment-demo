@@ -64,8 +64,8 @@ jobs:
             )
           '
         env:
-          APP_NAME: ${{ env.APP_NAME_MAIN }}
-          APP_TITLE: ${{ env.APP_TITLE_MAIN }}
+          APP_NAME: ${{ vars.APP_NAME_MAIN }}
+          APP_TITLE: ${{ vars.APP_TITLE_MAIN }}
           RSCONNECT_USERNAME: ${{ secrets.RSCONNECT_USERNAME }}
 
       - name: Clean up account details
