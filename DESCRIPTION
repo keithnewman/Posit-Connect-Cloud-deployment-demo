@@ -2,10 +2,7 @@ Package: pcc.deploy.demo
 Title: An Amazing Shiny App
 Version: 0.0.0.9000
 Authors@R: 
-    person(given = "firstname",
-           family = "lastname",
-           role = c("aut", "cre"),
-           email = "your@email.com")
+    person("firstname", "lastname", , "your@email.com", role = c("aut", "cre"))
 Description: What the package does (one paragraph).
 License: What license is it under?
 Imports: 
@@ -13,6 +10,8 @@ Imports:
     golem,
     pkgload,
     shiny
+Suggests: 
+    rsconnect
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.1
