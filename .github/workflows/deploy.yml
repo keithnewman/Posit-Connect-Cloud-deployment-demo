@@ -1,0 +1,75 @@
+name: Deploy to Posit Connect Cloud
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup R
+        uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: "4.5.2"
+
+      - name: Install pak
+        run: |
+          UBUNTU_CODENAME=$(lsb_release -cs)
+          Rscript -e "
+            install.packages('pak', repos = 'https://packagemanager.posit.co/cran/__linux__/${UBUNTU_CODENAME}/latest');
+          "
+      
+      - name: Instruct renv to use pak in .Rprofile
+        run: |
+          echo 'options(renv.config.pak.enabled = TRUE)' >> .Rprofile
+      
+      - name: Restore packages from renv.lock file
+        uses: r-lib/actions/setup-renv@v2
+
+      - name: Authenticate with rsconnect
+        run: |
+          Rscript -e '
+            rsconnect::connectCloudClientCredentials(
+              clientId = Sys.getenv("RSCONNECT_CLIENT_ID"),
+              clientSecret = Sys.getenv("RSCONNECT_CLIENT_SECRET"),
+              accountName = Sys.getenv("RSCONNECT_USERNAME"),
+              name = NULL
+            )
+          '
+        env:
+          RSCONNECT_CLIENT_ID: ${{ secrets.RSCONNECT_CLIENT_ID }}
+          RSCONNECT_CLIENT_SECRET: ${{ secrets.RSCONNECT_CLIENT_SECRET }}
+          RSCONNECT_USERNAME: ${{ secrets.RSCONNECT_USERNAME }}
+
+      - name: Deploy to Posit Connect Cloud
+        run: |
+          Rscript -e '
+            rsconnect::deployApp(
+              appDir = ".",
+              appName = Sys.getenv("APP_NAME"),
+              appTitle = Sys.getenv("APP_TITLE"),
+              logLevel = "verbose",
+              account = Sys.getenv("RSCONNECT_USERNAME"),
+              forceUpdate = TRUE
+            )
+          '
+        env:
+          APP_NAME: ${{ env.APP_NAME_MAIN }}
+          APP_TITLE: ${{ env.APP_TITLE_MAIN }}
+          RSCONNECT_USERNAME: ${{ secrets.RSCONNECT_USERNAME }}
+
+      - name: Clean up account details
+        run: |
+          Rscript -e '
+            rsconnect::removeAccount(
+              name = Sys.getenv("RSCONNECT_USERNAME")
+            )
+          '
+        env:
+          RSCONNECT_USERNAME: ${{ secrets.RSCONNECT_USERNAME }}
