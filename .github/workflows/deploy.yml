@@ -49,7 +49,7 @@ jobs:
         env:
           RSCONNECT_CLIENT_ID: ${{ secrets.RSCONNECT_CLIENT_ID }}
           RSCONNECT_CLIENT_SECRET: ${{ secrets.RSCONNECT_CLIENT_SECRET }}
-          RSCONNECT_USERNAME: ${{ secrets.RSCONNECT_USERNAME }}
+          RSCONNECT_USERNAME: ${{ vars.RSCONNECT_USERNAME }}
 
       - name: Deploy to Posit Connect Cloud
         run: |
@@ -66,7 +66,7 @@ jobs:
         env:
           APP_NAME: ${{ vars.APP_NAME_MAIN }}
           APP_TITLE: ${{ vars.APP_TITLE_MAIN }}
-          RSCONNECT_USERNAME: ${{ secrets.RSCONNECT_USERNAME }}
+          RSCONNECT_USERNAME: ${{ vars.RSCONNECT_USERNAME }}
 
       - name: Clean up account details
         run: |
@@ -76,4 +76,4 @@ jobs:
             )
           '
         env:
-          RSCONNECT_USERNAME: ${{ secrets.RSCONNECT_USERNAME }}
+          RSCONNECT_USERNAME: ${{ vars.RSCONNECT_USERNAME }}
