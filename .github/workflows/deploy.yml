@@ -32,6 +32,10 @@ jobs:
       - name: Restore packages from renv.lock file
         uses: r-lib/actions/setup-renv@v2
 
+      - name: Install rsconnect if not present in renv.lock
+        run: |
+          Rscript -e "if (!requireNamespace('rsconnect', quietly = TRUE)) pak::pak('rstudio/rsconnect')"
+
       - name: Authenticate with rsconnect
         run: |
           Rscript -e '
